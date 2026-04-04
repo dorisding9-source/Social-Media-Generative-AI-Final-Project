@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RootSignal — Project Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a222c;
+      --border: #2d3a47;
+      --text: #e8eef4;
+      --muted: #9fb0c0;
+      --accent: #5eead4;
+      --accent-dim: #2dd4bf33;
+      --warm: #fbbf24;
+      --radius: 12px;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-dim), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 50%, #1e3a5f33, transparent);
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(1.85rem, 4vw, 2.45rem);
+      letter-spacing: -0.02em;
+      margin: 0 0 0.5rem;
+      line-height: 1.2;
+    }
+
+    header .subtitle {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin: 0;
+      max-width: 36em;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 0;
+      padding: 0.25rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .tabs button {
+      flex: 1;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.85rem 1rem;
+      border: none;
+      border-radius: calc(var(--radius) - 4px);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .tabs button:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tabs button[aria-selected="true"] {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .tabs button:focus-visible {
+      outline: 2px solid var(--warm);
+      outline-offset: 2px;
+    }
+
+    .storyboard-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.75rem 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.35rem;
+      margin: 0 0 1rem;
+      color: var(--warm);
+    }
+
+    .panel p {
+      margin: 0 0 1rem;
+      color: var(--text);
+    }
+
+    #panel-overview p {
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    .panel p:last-child {
+      margin-bottom: 0;
+    }
+
+    .team-name {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 1.25rem;
+    }
+
+    table.roster {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    table.roster th,
+    table.roster td {
+      text-align: left;
+      padding: 0.75rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.roster th {
+      background: rgba(94, 234, 212, 0.08);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    table.roster tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.storyboard {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    table.storyboard th,
+    table.storyboard td {
+      vertical-align: top;
+      padding: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    table.storyboard th {
+      background: rgba(251, 191, 36, 0.12);
+      color: var(--warm);
+      font-weight: 600;
+    }
+
+    table.storyboard img {
+      display: block;
+      width: 140px;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main>
+    <header>
+      <h1>RootSignal</h1>
+      <p class="subtitle">Catch the origin before the pile-on—see if the spike looks organic or engineered.</p>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Proposal sections">
+      <button type="button" role="tab" id="tab-overview" aria-selected="true" aria-controls="panel-overview">Overview</button>
+      <button type="button" role="tab" id="tab-team" aria-selected="false" aria-controls="panel-team">Team</button>
+      <button type="button" role="tab" id="tab-storyboard" aria-selected="false" aria-controls="panel-storyboard">Storyboard</button>
+    </div>
+
+    <section id="panel-overview" class="panel active" role="tabpanel" aria-labelledby="tab-overview">
+      <h2>Project overview</h2>
+      <p>
+        <strong>Motivation.</strong> The same claim can explode across forums, short video, and quote posts in hours—sometimes because communities genuinely care, and sometimes because coordinated accounts, templates, or incentive structures amplify it inorganically. We want to study <strong>discourse emergence</strong>: where a topic first takes shape, how it jumps between communities, and whether the spike carries <strong>structural signatures</strong> of coordination (synchronized posting, bridge patterns, copy-paste bursts) rather than only measuring popularity. We treat “who is bad” as out of scope; our output is <strong>evidence-backed risk signals</strong> and provenance-style traces that humans can interpret.
+      </p>
+      <p>
+        <strong>User and research value.</strong> Researchers, journalists, and platform-integrity-minded teams gain a calmer workflow that separates <em>attention</em> from <em>organic-looking spread</em>, highlights benign alternative explanations (breaking news relays, fandom mobilization), and exports audit-friendly summaries. Business value lies in faster prioritization for investigation and clearer communication of uncertainty—framed as <strong>coordination-amplification risk</strong>, not courtroom verdicts.
+      </p>
+      <p>
+        <strong>Components we will build.</strong> (1) Ethical ingestion of public posts and metadata into a hosted <strong>database</strong> with snapshots for replay; (2) clustering and graph features that estimate earliest detectable roots, cross-platform linkage, and time-stacked similarity; (3) a <strong>React</strong> console with timeline scrubbers, subgraph views, and filters by topic or region; (4) <strong>retrieval-augmented (RAG)</strong> explanations grounded in retrieved posts; (5) <strong>PydanticAI agents</strong> that emit schema-locked objects—e.g., emergence trace + coordination-risk factors + caveats—with optional <strong>web search</strong> and code-backed checks for baselines and plots. Course-aligned media (<strong>AI voice</strong>, <strong>image</strong> assets, <strong>reel</strong> assembly) will support demos; evaluation will compare our flags to simple keyword alerts and document failure modes (organic events that look coordinated).
+      </p>
+    </section>
+
+    <section id="panel-team" class="panel" role="tabpanel" aria-labelledby="tab-team" hidden>
+      <h2>Team</h2>
+      <p class="team-name">The Provenance Lab</p>
+      <table class="roster">
+        <thead>
+          <tr>
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Email</th>
+            <th scope="col">SIS ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kenza</td>
+            <td>Moussaoui Rahali</td>
+            <td>kenza.moussaoui@university.edu</td>
+            <td>KM2774</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="panel-storyboard" class="panel" role="tabpanel" aria-labelledby="tab-storyboard" hidden>
+      <h2>Hype reel storyboard (~30s, vertical)</h2>
+      <div class="storyboard-wrap">
+      <table class="storyboard">
+        <thead>
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Scene description</th>
+            <th scope="col">Narration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><img src="scene_01.png" alt="Scene 1 anchor: many feeds converging toward a single origin glow" width="140" height="248" /></td>
+            <td>
+              <strong>Hook — medium.</strong> Vertical phone frame: rapid cuts of the same headline in different apps; whip-pan to a single glowing “root” node on a dark map. High energy, shallow depth of field, safe margins for TikTok UI chrome.
+            </td>
+            <td>“Everyone’s talking overnight—but who lit the match?”</td>
+          </tr>
+          <tr>
+            <td><img src="scene_02.png" alt="Scene 2 anchor: network graph with coordination risk visualization" width="140" height="248" /></td>
+            <td>
+              <strong>Close-up UI.</strong> Analyst screen: diffusion timeline scrubber, bridge edges lighting up, a “coordination-style burst” band (synchronized posts) pulsing—not red-alert chaos, crisp data viz. Finger drags time; subgraph highlights.
+            </td>
+            <td>“RootSignal traces emergence—and separates organic buzz from campaign-shaped spikes.”</td>
+          </tr>
+          <tr>
+            <td><img src="scene_03.png" alt="Scene 3 anchor: calm analyst with evidence panels and uncertainty labels" width="140" height="248" /></td>
+            <td>
+              <strong>Hero medium.</strong> Presenter in soft rim light; end card shows <strong>RootSignal</strong> logo plus tagline “Evidence, not verdicts.” Vertical 9:16; confident but serious tone (integrity tool, not gossip).
+            </td>
+            <td>“Ground your final project in graphs, citations, and grown-up uncertainty—Generative AI &amp; Social Media.”</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+      var panels = {
+        overview: document.getElementById("panel-overview"),
+        team: document.getElementById("panel-team"),
+        storyboard: document.getElementById("panel-storyboard")
+      };
+
+      function showPanel(id) {
+        var key = id.replace("tab-", "");
+        var map = { overview: panels.overview, team: panels.team, storyboard: panels.storyboard };
+        Object.keys(map).forEach(function (k) {
+          var el = map[k];
+          var isActive = k === key;
+          el.classList.toggle("active", isActive);
+          el.hidden = !isActive;
+        });
+        tabs.forEach(function (btn) {
+          var sel = btn.id === id;
+          btn.setAttribute("aria-selected", sel);
+        });
+      }
+
+      tabs.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          showPanel(btn.id);
+        });
+      });
+
+      var order = ["tab-overview", "tab-team", "tab-storyboard"];
+      var tablist = document.querySelector('[role="tablist"]');
+      if (tablist) {
+        tablist.addEventListener("keydown", function (e) {
+          var i = order.indexOf(document.activeElement && document.activeElement.id);
+          if (i < 0) return;
+          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            var next = e.key === "ArrowRight" ? (i + 1) % order.length : (i - 1 + order.length) % order.length;
+            showPanel(order[next]);
+            document.getElementById(order[next]).focus();
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
