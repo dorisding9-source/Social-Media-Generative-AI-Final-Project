@@ -367,7 +367,8 @@ export async function runScraperAgent(handle, emit, opts = {}) {
         : mockProfile(normalized);
     }
 
-    if (tweets.length < MIN_TWEETS_OK) {
+    const hasRealTweets = tweets.length > 0 && source !== "mock" && source !== "mock_fallback";
+    if (tweets.length < MIN_TWEETS_OK && !hasRealTweets) {
       emit({
         stage: "scraper",
         message: "Insufficient data after all steps — using mock corpus so downstream agents can run.",
@@ -376,6 +377,13 @@ export async function runScraperAgent(handle, emit, opts = {}) {
       tweets = mockTweets(normalized, 200);
       source = "mock_fallback";
       profile = profile || mockProfile(normalized);
+    } else if (tweets.length < MIN_TWEETS_OK && hasRealTweets) {
+      emit({
+        stage: "scraper",
+        message: `Proceeding with limited real corpus (${tweets.length} posts).`,
+        detail: "Results may be lower-confidence, but evidence remains real (not mock fallback).",
+        progress: 0.22,
+      });
     }
   }
 
